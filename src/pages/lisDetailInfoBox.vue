@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="dis_item_center" v-if="close_time">
+      <div class="dis_item_center" v-if="isShowDiv && close_time">
         <div class="dis_item_center_6">
           <div class="dis_setting_1_1" style="padding-left:0px;">封箱时间 {{close_time}}</div>
         </div>
@@ -194,12 +194,11 @@ export default {
       getExpandSampleInfoDetail({
         box_num: that.boxnum,
         id: that.id,
-        status: that.status
+        status: that.status == 3 ? '' : that.status
       }).then((res) => {
         if (res.data.success) {
           if(res.data.result && res.data.result.length > 0 ){
-            let item = res.data.result[0];
-
+            let item = res.data;
             that.conveyer_person_name = item.conveyer_person_name;
             that.convey_time = item.convey_time;
             that.receive_person_name = item.receive_person_name;
