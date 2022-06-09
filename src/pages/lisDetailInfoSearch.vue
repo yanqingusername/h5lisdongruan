@@ -2,24 +2,26 @@
   <div class="child-section">
     <div class="main">
       <div class="dis_setting_view" style="background:#FFFFFF;">
-        <van-search
-          v-model="value"
-          show-action
-          placeholder="请输入箱码"
-          @search="onSearch"
-          @cancel="onCancel"
-        />
+        <form action="/" style="width:100%;">
+          <van-search
+            v-model="value"
+            show-action
+            placeholder="请输入箱码"
+            @search="onSearch"
+            @cancel="onCancel"
+          />
+        </form>
       </div>
 
       <div class="search-list-role" v-if="instrumentList.length>0">
         <div
             v-for="(item, index) in instrumentList"
-            :key="index" @click="clickItem">
+            :key="index" @click="clickItem(item.box_num,item.status)">
             <div class="search-result-view">
               <div class="dis_setting" style="padding: 0px 0px 0px 0px;">
                 <div class="s_center_t_item" style="display:flex;">
-                  <div class="search-result-view-1">{{item.id}}.</div>
-                  <div class="search-result-view-2">{{item.boxnumber}}</div>
+                  <div class="search-result-view-1">{{index+1}}.</div>
+                  <div class="search-result-view-2">{{item.box_num}}</div>
                 </div>
                 <div class="search-result-view-3" style="display:flex;">
                   <!-- <div class="search-result-view-1">{{item.boxnumber}}</div> -->
@@ -37,10 +39,10 @@
       <div class="empty_view"></div>
       
 
-      <div class="view_bottom">
+      <!-- <div class="view_bottom">
         <div class="view_bottom_left" @click="onClickLeft"><van-icon name="arrow-left" size="20" />返回</div>
-        <!-- <div class="view_bottom_right" @click="clickDown">封箱（10/300）</div> -->
-      </div>
+        <div class="view_bottom_right"></div>
+      </div> -->
 
     </div>
 
@@ -48,221 +50,63 @@
 </template>
 
 <script>
-import { getJSSDKHELP,conveyScan,getCheckedUserId } from "../request/api";
+import { searchSampleBoxInfo } from "../request/api";
 import { Toast } from "vant";
-import wx from 'jweixin-module';
 export default {
   name: "",
   components: {},
   data() {
     return {
-      tabIndex: 1,
-      isShowSuccess: true,
-      roleId: "",
-      roleName: "",
-      userId: "",
-      instrumentList:[
-        {
-          "id": 1,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 2,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 3,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        }
-      ],
-      currentDateText: '',
-      currentDate: new Date(),
+      id: "",
+      boxnum: "",
+      instrumentList:[],
+      value: ''
     };
   },
   created() {
-    this.roleId = this.$route.query.id;
-    this.roleName = this.$route.query.name;
-    this.userId = this.$route.query.userId;
-    console.log(this.roleId);
-    console.log(this.roleName);
-    console.log(this.userId);
-    this.currentDateText = this.timeFormat1(this.currentDate);
+    this.id = this.$route.query.id;
+    this.boxnum = this.$route.query.boxnum;
+    
   },
   mounted() {
-    this.isWechat();
+    if(this.boxnum){
+      this.searchSampleBoxInfo(this.boxnum);
+    }
   },
   methods: {
-    timeFormat1(time) { // 时间格式化 2019-09-08
-     let year = time.getFullYear();
-     let month = time.getMonth() + 1;
-      if(month<10){
-        month = '0'+month;
-      }
-     let day = time.getDate();
-      if(day<10){
-        day = '0'+day;
-      }
-
-    return year + '年' + month + '月' + day + '日';
-     },
-    isWechat() {
-      const ua = window.navigator.userAgent.toLowerCase();
-      if (ua.match(/micromessenger/i) == 'micromessenger') {
-        // return true;
-        console.log('微信浏览器');
-        this.scanQRJssdk();
-      } else {
-        console.log('普通浏览器,请在手机微信浏览器打开此页面');
-        return false;
-      }
-    },
-    // 初始化sdk配置
-    async scanQRJssdk() {
-      // alert(`url链接:${window.location.href}`);
-	  const u = navigator.userAgent;
-      const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; // Android
-      const isIOS = navigator.platform.indexOf('iPhone') != -1;//ios
-       let url = '';
-      if (isAndroid) {
-        url = location.href;
-      }
-      if (isIOS) {
-        url = location.href.split('#')[0]; // hash模式下,#后面的部分如果带上ios中config会不对
-      }
-      const api = [];
-      // 'qrCode','barCode'
-      api.push('qrCode');
-      api.push('barCode');
-      // alert(url);
-      const resData = await getJSSDKHELP({ url });	// 根据接口返回appId，timestamp等数据
-      console.log('获取微信配置结果', resData);
-      if (resData) {
-        // alert(JSON.stringify(resData.data));
-        wx.config({
-          // beta: true,
-          debug: false,
-          appId: resData.data.appId,
-          timestamp: resData.data.timestamp,
-          nonceStr: resData.data.nonceStr,
-          signature: resData.data.signature,
-          jsApiList: ['checkJsApi', 'scanQRCode']
-        });
-        wx.ready(() => {
-          wx.checkJsApi({
-            jsApiList: ['scanQRCode'],
-            success(res) {
-              console.log('aaaa', res);
-            }
-          });
-        });
-        wx.error((res) => {
-          alert(`出错了：${res.errMsg}`);// 这个地方的好处就是wx.config配置错误，会弹出窗口哪里错误，然		后根据微信文档查询即可。
-        });
-      }
-    },
-    clickSearch(){
-
-    },
-    // 扫描
-   scanQRCodeClick() {
-     this.getScanQRCodeClick();
-   },
-    getScanQRCodeClick() {	// 点击的时候调起扫一扫功能呢
-      const that = this;
-      wx.scanQRCode({
-        needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-        scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
-        success(res) {
-          const resultStrArr = res.resultStr.split(',');		
-          // 转为数组时为了避免扫描一维码是返回CODE_128,20180528前面会添加一个CODE_128所以转为数组获		取最后一条就行了
-          console.log(resultStrArr[resultStrArr.length - 1]); // 输出扫码信息
-          that.result = resultStrArr[resultStrArr.length - 1];
-          let boxCodeNumber = resultStrArr[resultStrArr.length - 1];
-          if(boxCodeNumber){
-            that.getBindSearch(boxCodeNumber);
-          }
-        },
-        fail(res) {
-          console.log('err', res);
-        }
-      });
-    },
-    /**
-     * 
-     */
-    getBindSearch(boxCodeNumber) {
+    searchSampleBoxInfo(box_num){
       let that = this;
-      conveyScan({
-        box_num: boxCodeNumber,
-        userId: this.userId
+      searchSampleBoxInfo({
+        box_num: box_num,
+        id: this.id
       }).then((res) => {
         if (res.data.success) {
-          that.bindInfo = {
-            box_num: res.data.box_num,
-            system_sum: res.data.system_sum,
-            channel_name: res.data.channel_name,
-            is_receive: res.data.is_receive,
-          }
-          that.isShow = true;
+          that.instrumentList = res.data.result;
         } else {
-            Toast(res.data.msg)
+          Toast(res.data.msg)
         }
       });
     },
     onClickLeft() {
       this.$router.back();
     },
-    clickItem(){
-       this.$router.push({
-        path: "/lisDetailInfoBox",
-        query:{id: this.roleId,name: this.roleName,userId: this.userId}
-      });
-    }
-    
-    
+    clickItem(box_num,status){
+      if(box_num && status){
+        this.$router.replace({
+          path: "/lisDetailInfoBox",
+          query:{id: this.id,boxnum: box_num,st:status}
+        });
+      }
+    },
+    onSearch(val) {
+      if(val){
+        this.value = val;
+        this.searchSampleBoxInfo(val);
+      }
+    },
+    onCancel() {
+      this.onClickLeft();
+    },
   },
 };
 </script>
@@ -328,12 +172,11 @@ color: #999999;
   justify-content: center;
   align-items: center;
   padding: 0px 30px 0px 30px;
-
-  .van-search{
+}
+.van-search{
     width: 100% !important;
     padding: 10px 0px;
   }
-}
 .dis_setting_view_tab{
   width: 100%;
   display: flex;
@@ -635,10 +478,10 @@ color: #999999;
   align-items: center;
  width: 506px;
 height: 88px;
-background: #307FF5;
+background: #FFFFFF;
 border-radius: 16px;
 
-  border: 1px solid #307FF5;
+  border: 1px solid #FFFFFF;
   font-size: 30px;
   color: #FFFFFF;
 }

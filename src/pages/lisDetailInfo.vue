@@ -16,16 +16,16 @@
           <van-icon name="arrow-down" size="16"/>
         </div>
         <div class="dis_item_center_3">
-          <div class="dis_setting_1_1">箱数 4 管数 809</div>
+          <div class="dis_setting_1_1">箱数 {{box_sum}} 管数 {{sample_sum}}</div>
         </div>
       </div>
 
       <div class="dis_setting_view_tab">
         
-          <div class="dis_setting_view_tab_1" :style="tabIndex == 1 ? 'color: #307FF5;':'color: #999999;'">全部</div>
-          <div class="dis_setting_view_tab_1" :style="tabIndex == 2 ? 'color: #307FF5;':'color: #999999;'">待转运（1）</div>
-          <div class="dis_setting_view_tab_1" :style="tabIndex == 3 ? 'color: #307FF5;':'color: #999999;'">转运中（1）</div>
-          <div class="dis_setting_view_tab_1" :style="tabIndex == 4 ? 'color: #307FF5;':'color: #999999;'">已接收</div>
+          <div class="dis_setting_view_tab_1" :style="tabIndex == 0 ? 'color: #307FF5;':'color: #999999;'" @click="clickTabIndex('0')">全部</div>
+          <div class="dis_setting_view_tab_1" :style="tabIndex == 3 ? 'color: #307FF5;':'color: #999999;'" @click="clickTabIndex('3')">待转运({{stay_transport_sum}})</div>
+          <div class="dis_setting_view_tab_1" :style="tabIndex == 4 ? 'color: #307FF5;':'color: #999999;'" @click="clickTabIndex('4')">转运中({{transporting_sum}})</div>
+          <div class="dis_setting_view_tab_1" :style="tabIndex == 5 ? 'color: #307FF5;':'color: #999999;'" @click="clickTabIndex('5')">已接收</div>
 
       </div>
 
@@ -33,16 +33,20 @@
       <div class="search-list-role" v-if="instrumentList.length>0">
         <div
             v-for="(item, index) in instrumentList"
-            :key="index" @click="clickItem">
+            :key="index" @click="clickItem(item.box_num,item.status)">
             <div class="search-result-view">
               <div class="dis_setting" style="padding: 0px 0px 0px 0px;">
                 <div class="s_center_t_item" style="display:flex;">
-                  <div class="search-result-view-1">{{item.id}}.</div>
-                  <div class="search-result-view-2">{{item.boxnumber}}</div>
+                  <div class="search-result-view-1">{{index+1}}.</div>
+                  <div class="search-result-view-2">{{item.box_num}}</div>
                 </div>
                 <div class="search-result-view-3" style="display:flex;">
-                  <div class="search-result-view-1">{{item.boxnumber}}</div>
-                  <div class="search-result-view-2" :style="id == 4 ? 'color: #307FF5;':'color: #999999;'">{{'未封箱'}}</div>
+                  <div class="search-result-view-1">{{item.sample_num}}</div>
+                  <div class="search-result-view-2" v-if="item.status == 1" style="color: #307FF5;">未封箱</div>
+                  <div class="search-result-view-2" v-if="item.status == 2" style="color: #999999;">已封箱</div>
+                  <div class="search-result-view-2" v-if="item.status == 3" style="color: #999999;">待转运</div>
+                  <div class="search-result-view-2" v-if="item.status == 4" style="color: #999999;">转运中</div>
+                  <div class="search-result-view-2" v-if="item.status == 5" style="color: #999999;">已接收</div>
                   <van-icon name="arrow" size="16"/>
                 </div>
               </div>
@@ -55,16 +59,27 @@
 
       <div class="view_bottom">
         <div class="view_bottom_left" @click="onClickLeft"><van-icon name="arrow-left" size="20" />返回</div>
-        <!-- <div class="view_bottom_right" @click="clickDown">封箱（10/300）</div> -->
+        <div class="view_bottom_right"></div>
       </div>
 
     </div>
+
+    <van-popup v-model="isShowDateTime" round position="bottom">
+     
+     <van-datetime-picker
+  v-model="currentDate"
+  type="date"
+  title="选择年月日"
+  @cancel="dateTimeCancel" 
+  @confirm="dateTimeConfirm"
+/>
+    </van-popup>
 
   </div>
 </template>
 
 <script>
-import { getJSSDKHELP,conveyScan,getCheckedUserId } from "../request/api";
+import { getJSSDKHELP,getAlreadySmapleInfo } from "../request/api";
 import { Toast } from "vant";
 import wx from 'jweixin-module';
 export default {
@@ -72,85 +87,51 @@ export default {
   components: {},
   data() {
     return {
-      tabIndex: 1,
+      tabIndex: 0,
       isShowSuccess: true,
-      roleId: "",
-      roleName: "",
-      userId: "",
-      instrumentList:[
-        {
-          "id": 1,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 2,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 3,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        }
-      ],
+      id: "",
+      instrumentList:[],
       currentDateText: '',
       currentDate: new Date(),
+      isShowDateTime: false,
+      box_sum: 0,
+      sample_sum: 0,
+      stay_transport_sum: 0,
+      transporting_sum: 0
     };
   },
   created() {
-    this.roleId = this.$route.query.id;
-    this.roleName = this.$route.query.name;
-    this.userId = this.$route.query.userId;
-    console.log(this.roleId);
-    console.log(this.roleName);
-    console.log(this.userId);
+    this.id = this.$route.query.id;
     this.currentDateText = this.timeFormat1(this.currentDate);
   },
   mounted() {
     this.isWechat();
+    this.getAlreadySmapleInfo();
   },
   methods: {
+    clickTabIndex(number){
+      this.tabIndex = number;
+      this.getAlreadySmapleInfo();
+    },
+    getAlreadySmapleInfo() {
+      let that = this;
+      getAlreadySmapleInfo({
+        id: that.id,
+        create_time: that.currentDateText,
+        status: this.tabIndex == 0 ? '' : this.tabIndex
+      }).then((res) => {
+        if (res.data.success) {
+          that.box_sum = res.data.box_sum;
+          that.sample_sum = res.data.sample_sum;
+          that.instrumentList = res.data.result;
+          that.stay_transport_sum = res.data.stay_transport_sum;
+          that.transporting_sum = res.data.transporting_sum;
+         
+        } else {
+            Toast(res.data.msg)
+        }
+      });
+    },
     timeFormat1(time) { // 时间格式化 2019-09-08
      let year = time.getFullYear();
      let month = time.getMonth() + 1;
@@ -162,7 +143,7 @@ export default {
         day = '0'+day;
       }
 
-    return year + '年' + month + '月' + day + '日';
+    return year + '-' + month + '-' + day + '';
      },
     isWechat() {
       const ua = window.navigator.userAgent.toLowerCase();
@@ -222,12 +203,13 @@ export default {
     clickSearch(){
       this.$router.push({
         path: "/lisDetailInfoSearch",
-        query:{id: this.roleId,name: this.roleName,userId: this.userId}
+        query:{id: this.id,boxnum:''}
       });
     },
     // 扫描
    scanQRCodeClick() {
      this.getScanQRCodeClick();
+    // this.getBindSearch('567890');
    },
     getScanQRCodeClick() {	// 点击的时候调起扫一扫功能呢
       const that = this;
@@ -253,35 +235,36 @@ export default {
      * 
      */
     getBindSearch(boxCodeNumber) {
-      let that = this;
-      conveyScan({
-        box_num: boxCodeNumber,
-        userId: this.userId
-      }).then((res) => {
-        if (res.data.success) {
-          that.bindInfo = {
-            box_num: res.data.box_num,
-            system_sum: res.data.system_sum,
-            channel_name: res.data.channel_name,
-            is_receive: res.data.is_receive,
-          }
-          that.isShow = true;
-        } else {
-            Toast(res.data.msg)
-        }
+      this.$router.push({
+        path: "/lisDetailInfoSearch",
+        query:{id: this.id,boxnum: boxCodeNumber}
       });
     },
     onClickLeft() {
       this.$router.back();
     },
-    clickItem(){
-       this.$router.push({
-        path: "/lisDetailInfoBox",
-        query:{id: this.roleId,name: this.roleName,userId: this.userId}
-      });
-    }
-    
-    
+    clickItem(box_num,status){
+      if(box_num && status){
+        this.$router.push({
+          path: "/lisDetailInfoBox",
+          query:{id: this.id,boxnum: box_num,st:status}
+        });
+      }
+    },
+    clickDateTime(){
+      this.isShowDateTime = true;
+    },
+    dateTimeCancel(){
+      this.isShowDateTime = false;
+    },
+    dateTimeConfirm(){
+      this.currentDateText = this.timeFormat1(this.currentDate);
+      console.log(this.currentDateText)
+      this.isShowDateTime = false;
+
+      this.instrumentList = [];
+      this.getAlreadySmapleInfo();
+    },
   },
 };
 </script>
@@ -363,7 +346,7 @@ color: #999999;
 font-family: PingFangSC-Regular, PingFang SC;
 font-weight: 400;
 color: #999999;
-padding: 30px 30px;
+padding: 30px 10px;
 }
 .dis_setting_1 {
   display: flex;
@@ -649,10 +632,10 @@ color: #999999;
   align-items: center;
  width: 506px;
 height: 88px;
-background: #307FF5;
+background: #FFFFFF;
 border-radius: 16px;
 
-  border: 1px solid #307FF5;
+  border: 1px solid #FFFFFF;
   font-size: 30px;
   color: #FFFFFF;
 }

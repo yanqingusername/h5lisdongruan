@@ -39,7 +39,7 @@
           </div>
         </div>
 
-         <van-button class="submit_view" block type="info" @click="handleLogin">登录</van-button>
+         <van-button class="submit_view" block type="info" @click="commit">登录</van-button>
       </div>
     </div>
 
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getLogin,getAutoLogin } from "../../request/api";
+import { getLogin } from "../../request/api";
 import { Notify,Toast } from 'vant';
 
 export default {
@@ -72,7 +72,7 @@ export default {
   created() {},
   mounted() {
     // this.isWechat();
-    // this.getAutoLogin();
+    this.getAutoLogin();
   },
   methods: {
     isWechat() {
@@ -135,6 +135,7 @@ export default {
       }
     },
     commit() {
+      let that = this;
       if (this.phone == "") {
         Toast('请输入账号')
           //  Notify({ type: 'danger', message: '请填写手机号'});
@@ -170,12 +171,15 @@ export default {
           console.log(res)
           if (res.data.success) {
             Toast(res.data.msg)
-            localStorage.setItem('vipPhone',this.phone);
-            localStorage.setItem('conveyPassword',this.code)
-            this.$router.push({
-                path: "/lisList",
-                query:{id: res.data.result[0].role,name: res.data.result[0].person_name,userId: res.data.result[0].id}
-            });
+            //allow_auto_login 0-允许自动登录  1-不允许自动登录
+            localStorage.setItem('lisPhone',that.phone);
+            localStorage.setItem('lisPassword',that.code)
+            if(res.data.allow_auto_login == 1 || res.data.allow_auto_login == 0){
+              that.$router.push({
+                  path: "/lisInfoCustom",
+                  query:{id: res.data.result[0].id}
+              });
+            }
           } else {
             Toast(res.data.msg)
           }
@@ -185,28 +189,28 @@ export default {
     handleLogin() {
       this.$router.push({
         path: "/lisInfoCustom",
-        query:{id: '1',name: '杨青',userId: '45'}
+        query:{id: '1'}
       });
     },
     getAutoLogin(){
-      let phone = localStorage.getItem('vipPhone');
-      // let password = localStorage.getItem('conveyPassword');
-      if(phone){
+      let that = this;
+      let phone = localStorage.getItem('lisPhone');
+      let password = localStorage.getItem('lisPassword');
+      if(phone && password){
         // this.phone = phone;
         // this.code = password;
-        getAutoLogin({
-         person_phone: phone,
-          // password: password
+        getLogin({
+          person_phone: phone,
+          password: password
         }).then((res) => {
           console.log(res)
           if (res.data.success) {
-            // this.phone = '';
-            // this.code = '';
-            if(res.data.is_auto_login == 0){
-              Toast(res.data.msg)
-              this.$router.push({
-                  path: "/lisList",
-                  query:{id: res.data.result[0].role,name: res.data.result[0].person_name,userId: res.data.result[0].id}
+            Toast(res.data.msg)
+            //allow_auto_login 0-允许自动登录  1-不允许自动登录
+            if(res.data.allow_auto_login == 0){
+              that.$router.push({
+                  path: "/lisInfoCustom",
+                  query:{id: res.data.result[0].id}
               });
             }
           } else {

@@ -8,38 +8,46 @@ import requestH5Other from './requestH5Other'
 
 export const udateH5Images = val => requestH5Imgs('', val, 'post');
 
+export const getLogin = val => requestH5Other('/eastlogin/login.hn', val, 'get'); //登录
+
+export const getSamplingRegistrantInfoById = val => requestH5Other('/eastlogin/getSamplingRegistrantInfoById.hn', val, 'get'); //根据账号id查采样登记信息
+
+export const writeRegistrantInfo = val => requestH5Other('/eastlogin/writeSamplingRegistrantInfo.hn', val, 'get'); //填写登记人信息
+
+export const getEverydaySampleBoxInfo = val => requestH5Other('/eastbox/getEverydaySampleBoxInfo.hn', val, 'get'); //获取首页采样数据
+
+export const getJSSDKHELP = val => requestH5Other('/eastbox/JSSDKHELP.hn', val, 'get'); // 调用扫一扫
+
+export const checkSampleBoxStatusIsClose = val => requestH5Other('/eastbox/checkSampleBoxStatusIsClose.hn', val, 'get'); //获取账号id未封箱的数据
+
+export const checkSampleBoxStatus = val => requestH5Other('/eastbox/checkSampleBoxStatus.hn', val, 'get'); //校验样本箱
+
+export const startScanSampleBox = val => requestH5Other('/eastbox/startScanSampleBox.hn', val, 'get'); //扫描箱码
+
+export const deleteSampleBoxInfo = val => requestH5Other('/eastbox/deleteSampleBoxInfo.hn', val, 'get'); //删除样本箱
+
+export const getSampleBoxInfo = val => requestH5Other('/eastbox/getSampleBoxInfo.hn', val, 'get'); //获取箱码详情
+
+export const closeSampleBox = val => requestH5Other('/eastbox/closeSampleBox.hn', val, 'get'); //封箱
+
+export const checkSampleTube = val => requestH5Other('/eastbox/checkSampleTube.hn', val, 'get'); //校验样本管
+
+export const addSampleTubeInfo = val => requestH5Other('/eastbox/addSampleTubeInfo.hn', val, 'get'); //添加样本管
+
+export const exitEastSampleLogin = val => requestH5Other('/eastlogin/exitEastSampleLogin.hn', val, 'get'); //登出
+
+export const deleteSampleTubeInfo = val => requestH5Other('/eastbox/deleteSampleTubeInfo.hn', val, 'get'); //删除样本管
+
+export const getAlreadySmapleInfo = val => requestH5Other('/eastbox/getAlreadySmapleInfo.hn', val, 'get'); //获取已采集信息
+
+export const getExpandSampleInfoDetail = val => requestH5Other('/eastbox/getExpandSampleInfoDetail.hn', val, 'get'); //获取试管
+
+export const getSampleBoxInfoDetail = val => requestH5Other('/eastbox/getSampleBoxInfoDetail.hn', val, 'get'); //获取试管
 
 
-export const getLogin = val => requestH5Other('/vipback/viplogin.hn', val, 'get'); //vip后台登陆
 
-export const getAutoLogin = val => requestH5Other('/vipback/checkAutoLogin.hn', val, 'get'); //vip后台自动登录
+export const searchSampleBoxInfo = val => requestH5Other('/eastbox/searchSampleBoxInfo.hn', val, 'get'); //搜索样本箱
 
-export const getAllVIPRecords = val => requestH5Other('/vipback/getAllVIPAppointmentRecords.hn', val, 'get'); //vip后台获取预约记录
-
-export const updatePersonNum = val => requestH5Other('/vipback/updateAppointmentPersonNum.hn', val, 'get'); //vip上门预约修改配置
-
-export const createVIPFiveRecord = val => requestH5Other('/vipback/createVIPFiveAppointmentRecord.hn', val, 'get'); //创建vip（5人以下）预约记录
-
-export const createVIPGroupRecord = val => requestH5Other('vipback/createVIPGroupAppointmentRecord.hn', val, 'get'); //创建vip（团体）预约记录
-
-export const updateVIPInfoByNum = val => requestH5Other('/vipback/updateVIPAppointmentInfoByNum.hn', val, 'get'); //后台vip根据预约码appointment_vip_num删除预约信息
-
-export const getVIPInfoByNum = val => requestH5Other('/vipback/getVIPAppointmentInfoByNum.hn', val, 'get'); //vip根据预约码appointment_vip_num获取预约信息
-
-export const checkVIPAppointmentNurse = val => requestH5Other('/vipback/checkVIPAppointmentNurse.hn', val, 'get'); //预约护士检验
-
-export const updateVIPOrderStatus = val => requestH5Other('/vipback/updateVIPAppointmentOrderStatus.hn', val, 'get'); //vip上门后台修改预约订单
-
-export const getNurseInfo = val => requestH5Other('/vipback/getNurseInfo.hn', val, 'get'); //获取护士信息
-
-export const createCustomerAddressInfo = val => requestH5Other('/vipback/createCustomerAddressInfo.hn', val, 'get'); //vip预约客户填信息
-
-
-export const getVIPServiceType = val => requestH5Other('/avip/getVIPServiceType.hn', val, 'get'); //
-
-
-export const getAppointmentPersonNum = val => requestH5Other('/vipback/getAppointmentPersonNum.hn', val, 'get'); 
-
-
+export const searchSampleTubeInfo = val => requestH5Other('/eastbox/searchSampleTubeInfo.hn', val, 'get'); //搜索样本管信息
 
 

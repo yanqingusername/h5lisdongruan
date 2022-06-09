@@ -5,7 +5,7 @@
 
       <div class="search-list-role">
         <div class="dis_setting_item">
-          <div class="dis_setting_item_1">北京西站北广场采样站</div>
+          <div class="dis_setting_item_1">{{channel_name}}</div>
           <div class="dis_setting_item_2">不登记信息将无法进入使用系统</div>
         </div>
       </div>
@@ -16,11 +16,11 @@
             <div class="s_center_t_item" style="width: 30%">采样人姓名</div>
             <div class="select-item input-item">
               <input
-                v-model="vip_person"
+                v-model="sampling_member_name"
                 type="text"
-                name="vip_person"
-                placeholder="请输入真实姓名"
-                maxlength="50"
+                name="sampling_member_name"
+                placeholder="请输入采样人真实姓名"
+                maxlength="30"
               />
             </div>
           </div>
@@ -29,15 +29,15 @@
             <div class="s_center_t_item" style="width: 30%">采样点电话</div>
             <div class="select-item input-item">
               <input
-                v-model="vip_phone"
+                v-model="sampling_member_phone"
                 type="number"
-                name="vip_phone"
-                placeholder="请输入有效联系方式"
+                name="sampling_member_phone"
+                placeholder="请输入采样人有效联系方式"
                 maxlength="11"
               />
-              <div class="clear_1" @click="clearPhone" v-if="vip_phone">
+              <!-- <div class="clear_1" @click="clearPhone" v-if="sampling_member_phone">
                 <img class="icon_clear" src="../assets/images/deleteTest.png" />
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -45,11 +45,11 @@
             <div class="s_center_t_item" style="width: 30%">登记人姓名</div>
             <div class="select-item input-item">
               <input
-                v-model="vip_person"
+                v-model="registrant_member_name"
                 type="text"
-                name="vip_person"
-                placeholder="请输入真实姓名"
-                maxlength="50"
+                name="registrant_member_name"
+                placeholder="请输入登记人真实姓名"
+                maxlength="30"
               />
             </div>
           </div>
@@ -58,15 +58,15 @@
             <div class="s_center_t_item" style="width: 30%">登记人电话</div>
             <div class="select-item input-item">
               <input
-                v-model="vip_phone"
+                v-model="registrant_member_phone"
                 type="number"
-                name="vip_phone"
-                placeholder="请输入有效联系方式"
+                name="registrant_member_phone"
+                placeholder="请输入登记人有效联系方式"
                 maxlength="11"
               />
-              <div class="clear_1" @click="clearPhone" v-if="vip_phone">
+              <!-- <div class="clear_1" @click="clearAccountPhone" v-if="registrant_member_phone">
                 <img class="icon_clear" src="../assets/images/deleteTest.png" />
-              </div>
+              </div> -->
             </div>
           </div>
           
@@ -89,7 +89,7 @@ import {
   Button,
   Dialog,
 } from "vant";
-import { createCustomerAddressInfo,getVIPInfoByNum,getVIPServiceType } from "../request/api";
+import { getSamplingRegistrantInfoById,writeRegistrantInfo } from "../request/api";
 
 export default {
   name: "",
@@ -99,34 +99,37 @@ export default {
   },
   data() {
     return {
-      vip_person: "",
-      vip_phone: "",
-      roleId: 1,
-      roleName:'',
-      userId: '',
+      id: "",
+      channel_name:"",
+      channel_id:"",
+      registrant_member_name:"",
+      registrant_member_phone:"",
+      sampling_member_name:"",
+      sampling_member_phone:""
     };
   },
   created() {
-    this.appointment_vip_num = this.$route.query.avipnum;
-    this.roleId = this.$route.query.id;
-    this.roleName = this.$route.query.name;
-    this.userId = this.$route.query.userId;
-    console.log(this.roleId)
-    console.log(this.roleName)
-    console.log(this.userId)
+    this.id = this.$route.query.id;
   },
   mounted() {
-    // this.getVIPInfoByNum();
+    this.getSamplingRegistrantInfoById();
   },
   methods: {
-    getVIPInfoByNum(){
+    getSamplingRegistrantInfoById(){
       let that = this;
-      getVIPInfoByNum({
-        appointment_vip_num: that.appointment_vip_num
+      getSamplingRegistrantInfoById({
+        id: that.id
       }).then((res) => {
         if (res.data.success) {
-          let result = res.data.result
-          
+          let item = res.data.result;
+          if(item && item.length > 0){
+            that.channel_name = item[0].channel_name;
+            that.channel_id = item[0].channel_id;
+            that.registrant_member_name = item[0].registrant_member_name;
+            that.registrant_member_phone = item[0].registrant_member_phone;
+            that.sampling_member_name = item[0].sampling_member_name;
+            that.sampling_member_phone = item[0].sampling_member_phone;
+          }
         } else {
             Toast(res.data.msg)
         }
@@ -151,31 +154,62 @@ export default {
     clickSubmit() {
       let that = this;
 
-      // if(that.vip_person == ''){
-      //   Toast('请输入联系人姓名');
-      //   return;
-      // }
+      if(that.sampling_member_name == ''){
+        Toast('请输入采样人真实姓名');
+        return;
+      }
 
-      // if(that.vip_phone == ''){
-      //   Toast('请输入联系人手机号');
-      //   return;
-      // }
+      if(that.sampling_member_phone == ''){
+        Toast('请输入采样人有效联系方式');
+        return;
+      }
 
-      // if (!that.checkPhone(that.vip_phone)) {
-      //   Toast('手机号有误')
-      //   return;
-      // } 
+      if (!that.checkPhone(that.sampling_member_phone)) {
+        Toast('采样人手机号有误')
+        return;
+      } 
 
-      this.$router.push({
-        path: "/lisMain",
-        query:{id: this.roleId,name: this.roleName,userId: this.userId}
+      if(that.registrant_member_name == ''){
+        Toast('请输入登记人真实姓名');
+        return;
+      }
+
+      if(that.registrant_member_phone == ''){
+        Toast('请输入登记人有效联系方式');
+        return;
+      }
+
+      if (!that.checkPhone(that.registrant_member_phone)) {
+        Toast('登记人手机号有误')
+        return;
+      } 
+
+      writeRegistrantInfo({
+        sampling_member_name: that.sampling_member_name,
+        sampling_member_phone: that.sampling_member_phone,
+        registrant_member_name: that.registrant_member_name,
+        registrant_member_phone: that.registrant_member_phone,
+        channel_id: that.channel_id,
+        channel_name: that.channel_name,
+        id: that.id
+      }).then((res) => {
+        if (res.data.success) {
+          that.$router.push({
+            path: "/lisMain",
+            query:{id: that.id}
+          });
+        } else {
+          Toast(res.data.msg)
+        }
       });
-
-
+      
     },
     clearPhone() {
-      this.vip_phone = "";
+      this.sampling_member_phone = "";
     },
+    clearAccountPhone(){
+      this.registrant_member_phone = "";
+    }
   },
 };
 </script>

@@ -12,51 +12,54 @@
      
       <div class="dis_item_center">
         <div class="dis_item_center_3">
-          <div class="dis_setting_1_1" style="padding-left:0px;">管数 200</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;">管数 {{instrumentList.length}}</div>
         </div>
         <div class="dis_item_center_3">
-          <div class="dis_setting_1_1" style="padding-left:0px;">状态 待转运</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;" v-if="status==1">状态 未封箱</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;" v-if="status==2">状态 已封箱</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;" v-if="status==3">状态 待转运</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;" v-if="status==4">状态 转运中</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;" v-if="status==5">状态 已接收</div>
         </div>
       </div>
 
-      <div class="dis_item_center">
-        <div class="dis_item_center_4">
-          <div class="dis_setting_1_1" style="padding-left:0px;">人数 200</div>
+      <div class="dis_item_center" v-if="create_time">
+        <div class="dis_item_center_6">
+          <div class="dis_setting_1_1" style="padding-left:0px;">开箱时间 {{create_time}}</div>
         </div>
       </div>
 
-      <div class="dis_item_center">
+      <div class="dis_item_center" v-if="close_time">
         <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">接收时间 2022-05-29   12:00:04</div>
-        </div>
-        <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">接收人 李三四</div>
+          <div class="dis_setting_1_1" style="padding-left:0px;">封箱时间 {{close_time}}</div>
         </div>
       </div>
 
-      <div class="dis_item_center">
-        <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">转运时间 2022-05-29   12:00:04</div>
+      <div class="dis_item_center" v-if="isShowDiv">
+        <div class="dis_item_center_6" v-if="receive_time">
+          <div class="dis_setting_1_1" style="padding-left:0px;">接收时间 {{receive_time}}</div>
         </div>
-        <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">转运人 李三四</div>
-        </div>
-      </div>
-
-      <div class="dis_item_center">
-        <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">封箱时间 2022-05-29   12:00:04</div>
+        <div class="dis_item_center_6" v-if="receive_person_name">
+          <div class="dis_setting_1_1" style="padding-left:0px;">接收人 {{receive_person_name}}</div>
         </div>
       </div>
 
-      <div class="dis_item_center">
-        <div class="dis_item_center_6">
-          <div class="dis_setting_1_1" style="padding-left:0px;">开箱时间 2022-05-29   12:00:04</div>
+      <div class="dis_item_center" v-if="isShowDiv">
+        <div class="dis_item_center_6" v-if="convey_time">
+          <div class="dis_setting_1_1" style="padding-left:0px;">转运时间 {{convey_time}}</div>
+        </div>
+        <div class="dis_item_center_6" v-if="conveyer_person_name">
+          <div class="dis_setting_1_1" style="padding-left:0px;">转运人 {{conveyer_person_name}}</div>
         </div>
       </div>
+      
 
       <div class="dis_item_center" @click="clickShowDiv">
-        <div class="dis_item_center_5">
+        <div class="dis_item_center_5" v-if="isShowDiv">
+          <van-icon name="arrow-up" size="20"/>
+          <div class="dis_setting_1_1" style="padding-left:0px;">收起</div>
+        </div>
+        <div class="dis_item_center_5" v-else>
           <van-icon name="arrow-down" size="20"/>
           <div class="dis_setting_1_1" style="padding-left:0px;">展开</div>
         </div>
@@ -70,11 +73,11 @@
             <div class="search-result-view">
               <div class="dis_setting" style="padding: 0px 0px 0px 0px;">
                 <div class="s_center_t_item" style="display:flex;">
-                  <div class="search-result-view-1">{{item.id}}.</div>
-                  <div class="search-result-view-2">{{item.boxnumber}}</div>
+                  <div class="search-result-view-1">{{index+1}}.</div>
+                  <div class="search-result-view-2">{{item.sample_id}}</div>
                 </div>
                 <div class="search-result-view-3" style="display:flex;">
-                  <div class="search-result-view-1">{{item.time}}</div>
+                  <div class="search-result-view-1">{{item.create_time}}</div>
                 </div>
               </div>
             </div>
@@ -86,7 +89,7 @@
 
       <div class="view_bottom">
         <div class="view_bottom_left" @click="onClickLeft"><van-icon name="arrow-left" size="20" />返回</div>
-        <!-- <div class="view_bottom_right" @click="clickDown">封箱（10/300）</div> -->
+        <div class="view_bottom_right"></div>
       </div>
 
     </div>
@@ -95,7 +98,7 @@
 </template>
 
 <script>
-import { getJSSDKHELP,conveyScan,getCheckedUserId } from "../request/api";
+import { getJSSDKHELP,getExpandSampleInfoDetail,getSampleBoxInfoDetail } from "../request/api";
 import { Toast } from "vant";
 import wx from 'jweixin-module';
 export default {
@@ -103,98 +106,34 @@ export default {
   components: {},
   data() {
     return {
-      tabIndex: 1,
-      isShowSuccess: true,
-      roleId: "",
-      roleName: "",
-      userId: "",
-      instrumentList:[
-        {
-          "id": 1,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 2,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 3,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 4,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 5,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 6,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        },
-        {
-          "id": 7,
-          "boxnumber":'12345678904',
-          "time": '12:00:04'
-        }
-      ],
-      currentDateText: '',
-      currentDate: new Date(),
+      id: "",
+      boxnum: "",
+      status: "",
+      isShowDiv: false,
+      instrumentList:[],
+      conveyer_person_name: "",//转运人
+      convey_time: "",//转运时间
+      receive_person_name: "",//接收人
+      receive_time: "",//接收时间
+      close_time: "",//封箱时间
+      create_time: "",//开箱时间
     };
   },
   created() {
-    this.roleId = this.$route.query.id;
-    this.roleName = this.$route.query.name;
-    this.userId = this.$route.query.userId;
-    console.log(this.roleId);
-    console.log(this.roleName);
-    console.log(this.userId);
-    this.currentDateText = this.timeFormat1(this.currentDate);
+    this.id = this.$route.query.id;
+    this.boxnum = this.$route.query.boxnum;
+    this.status = this.$route.query.st;
+
+    document.title = this.boxnum + "箱码详情";
+   
   },
   mounted() {
     this.isWechat();
+
+    this.getExpandSampleInfoDetail();
+    this.getSampleBoxInfoDetail();
   },
   methods: {
-    timeFormat1(time) { // 时间格式化 2019-09-08
-     let year = time.getFullYear();
-     let month = time.getMonth() + 1;
-      if(month<10){
-        month = '0'+month;
-      }
-     let day = time.getDate();
-      if(day<10){
-        day = '0'+day;
-      }
-
-    return year + '年' + month + '月' + day + '日';
-     },
     isWechat() {
       const ua = window.navigator.userAgent.toLowerCase();
       if (ua.match(/micromessenger/i) == 'micromessenger') {
@@ -250,10 +189,47 @@ export default {
         });
       }
     },
+    getExpandSampleInfoDetail(){
+      let that = this;
+      getExpandSampleInfoDetail({
+        box_num: that.boxnum,
+        id: that.id,
+        status: that.status
+      }).then((res) => {
+        if (res.data.success) {
+          if(res.data.result && res.data.result.length > 0 ){
+            let item = res.data.result[0];
+
+            that.conveyer_person_name = item.conveyer_person_name;
+            that.convey_time = item.convey_time;
+            that.receive_person_name = item.receive_person_name;
+            that.receive_time = item.receive_time;
+            that.close_time = item.close_time;
+            that.create_time = item.create_time;
+          }
+        } else {
+          Toast(res.data.msg)
+        }
+      });
+    },
+    getSampleBoxInfoDetail(){
+      let that = this;
+      getSampleBoxInfoDetail({
+        box_num: that.boxnum,
+        id: that.id,
+        status: that.status
+      }).then((res) => {
+        if (res.data.success) {
+          that.instrumentList = res.data.result;
+        } else {
+          Toast(res.data.msg)
+        }
+      });
+    },
     clickSearch(){
       this.$router.push({
         path: "/lisDetailInfoBoxSearch",
-        query:{id: this.roleId,name: this.roleName,userId: this.userId}
+        query:{id: this.id,sampleid:''}
       });
     },
     // 扫描
@@ -284,30 +260,21 @@ export default {
      * 
      */
     getBindSearch(boxCodeNumber) {
-      let that = this;
-      conveyScan({
-        box_num: boxCodeNumber,
-        userId: this.userId
-      }).then((res) => {
-        if (res.data.success) {
-          that.bindInfo = {
-            box_num: res.data.box_num,
-            system_sum: res.data.system_sum,
-            channel_name: res.data.channel_name,
-            is_receive: res.data.is_receive,
-          }
-          that.isShow = true;
-        } else {
-            Toast(res.data.msg)
-        }
+      this.$router.push({
+        path: "/lisDetailInfoBoxSearch",
+        query:{id: this.id,sampleid:boxCodeNumber}
       });
     },
     onClickLeft() {
       this.$router.back();
     },
-    
-    
-    
+    clickShowDiv(){
+      if(this.isShowDiv){
+        this.isShowDiv = false;
+      }else{
+        this.isShowDiv = true;
+      }
+    }
   },
 };
 </script>
@@ -659,10 +626,10 @@ color: #999999;
   align-items: center;
  width: 506px;
 height: 88px;
-background: #307FF5;
+background: #FFFFFF;
 border-radius: 16px;
 
-  border: 1px solid #307FF5;
+  border: 1px solid #FFFFFF;
   font-size: 30px;
   color: #FFFFFF;
 }
