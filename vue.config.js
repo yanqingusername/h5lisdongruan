@@ -16,7 +16,8 @@ module.exports = {
         proxy: {
             '/lis_appointment': {
                 // target: 'https://lisalarm.coyotebio-lab.com',
-                target: 'https://scldev.coyotebio-lab.com:8443',
+                // target: 'https://scldev.coyotebio-lab.com:8443',
+                target: 'https://store.coyotebio-lab.com',
                 changeOrigin: true,
                 pathRewrite:{
                     '^/lis_appointment': '/lis_appointment'
