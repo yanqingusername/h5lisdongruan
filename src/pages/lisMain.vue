@@ -134,6 +134,9 @@ export default {
     };
   },
   created() {
+
+    document.title = '卡尤迪新冠核酸检测信息采集系统';
+
     this.id = this.$route.query.id;
   },
   mounted() {

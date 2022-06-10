@@ -63,7 +63,9 @@ export default {
       value: ''
     };
   },
-  created() {
+  activated() {
+    document.title = "搜索";
+
     this.id = this.$route.query.id;
     this.boxnum = this.$route.query.boxnum;
     

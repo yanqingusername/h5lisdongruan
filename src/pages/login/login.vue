@@ -69,7 +69,9 @@ export default {
       isShowWechat: true
     };
   },
-  created() {},
+  created() {
+    document.title = '登陆';
+  },
   mounted() {
     // this.isWechat();
     this.getAutoLogin();

@@ -120,11 +120,13 @@ export default {
     };
   },
   created() {
+    document.title = this.boxnum + "箱码详情";
+    
     this.id = this.$route.query.id;
     this.boxnum = this.$route.query.boxnum;
     this.status = this.$route.query.st;
 
-    document.title = this.boxnum + "箱码详情";
+    
    
   },
   mounted() {

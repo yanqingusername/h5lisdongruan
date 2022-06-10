@@ -64,6 +64,8 @@ export default {
     };
   },
   created() {
+    document.title = "搜索";
+
     this.id = this.$route.query.id;
     this.sampleid = this.$route.query.sampleid;
     

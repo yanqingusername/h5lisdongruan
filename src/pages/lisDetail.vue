@@ -185,6 +185,8 @@ export default {
     };
   },
   created() {
+    document.title = '箱码详情';
+
     this.id = this.$route.query.id;
     this.boxnum = this.$route.query.boxnum;
     console.log(this.id);
@@ -574,6 +576,7 @@ export default {
       }
     },
     beforeDeleteClose({ name, position, instance }) {
+      let that = this;
       switch (position) {
         case "left":
         case "cell":
@@ -581,7 +584,6 @@ export default {
           instance.close();
           break;
         case "right":
-          console.log("---->:", name);
           Dialog.confirm({
             message: "确认删除该试管吗？",
             confirmButtonColor: "#307FF5",
@@ -598,8 +600,7 @@ export default {
                 }
               });
               instance.close();
-            })
-            .catch(() => {
+            }).catch(() => {
               instance.close();
             });
           break;

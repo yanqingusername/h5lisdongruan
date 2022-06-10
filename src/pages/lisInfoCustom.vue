@@ -109,6 +109,9 @@ export default {
     };
   },
   created() {
+
+    document.title = '采样点人员信息登记';
+
     this.id = this.$route.query.id;
   },
   mounted() {

@@ -101,6 +101,8 @@ export default {
     };
   },
   created() {
+    document.title = '已采集信息';
+
     this.id = this.$route.query.id;
     this.currentDateText = this.timeFormat1(this.currentDate);
   },
