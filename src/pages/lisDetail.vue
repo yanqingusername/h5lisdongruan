@@ -438,6 +438,7 @@ export default {
             that.isShowSuccess = true;
             that.id = that.id;
             that.boxnum = boxCodeNumber;
+            localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
             that.getSampleBoxInfo();
           } else {
             Toast(res.data.msg);
@@ -593,6 +594,7 @@ export default {
             confirmButtonColor: "#307FF5",
           }).then(() => {
               deleteSampleTubeInfo({
+                boxnum: that.boxnum,
                 sample_id: name,
                 id: that.id
               }).then((res) => {

@@ -142,12 +142,12 @@ export default {
     // this.id = this.$route.query.id;
     this.id = localStorage.getItem('lisId');
 
-    this.isWechat();
+    // this.isWechat();
 
 
   },
   mounted() {
-    // this.isWechat();
+    this.isWechat();
     this.getEverydaySampleBoxInfo();
   },
   methods: {

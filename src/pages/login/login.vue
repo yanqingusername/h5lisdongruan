@@ -73,7 +73,7 @@ export default {
     document.title = '登录';
   },
   mounted() {
-    // this.isWechat();
+    this.isWechat();
     // this.getAutoLogin();
   },
   methods: {

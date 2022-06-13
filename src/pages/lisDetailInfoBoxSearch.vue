@@ -88,6 +88,7 @@ export default {
         if (res.data.success) {
           that.instrumentList = res.data.result;
         } else {
+          that.instrumentList = [];
           Toast(res.data.msg)
         }
       });
