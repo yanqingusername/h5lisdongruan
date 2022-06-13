@@ -187,8 +187,12 @@ export default {
   created() {
     document.title = '箱码详情';
 
-    this.id = this.$route.query.id;
-    this.boxnum = this.$route.query.boxnum;
+    // this.id = this.$route.query.id;
+    // this.boxnum = this.$route.query.boxnum;
+
+    this.id = localStorage.getItem('lisId');
+    this.boxnum = localStorage.getItem('lisDetailBoxnum');
+
     console.log(this.id);
     console.log(this.boxnum);
   },

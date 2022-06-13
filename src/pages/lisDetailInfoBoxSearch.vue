@@ -9,6 +9,7 @@
             placeholder="请输入试管条码"
             @search="onSearch"
             @cancel="onCancel"
+            @input="onInput"
           />
         </form>
       </div>
@@ -16,7 +17,7 @@
       <div class="search-list-role" v-if="instrumentList.length>0">
         <div
             v-for="(item, index) in instrumentList"
-            :key="index" @click="clickItem">
+            :key="index">
             <div class="search-result-view">
               <div class="dis_setting" style="padding: 0px 0px 0px 0px;">
                 <div class="s_center_t_item" style="display:flex;">
@@ -33,7 +34,7 @@
           </div>
       </div>
       <div class="search-list-role" v-else>
-        <div class="s_center_t_empty">没有搜索到相关箱码</div>
+        <div class="s_center_t_empty">没有搜索到相关试管条码</div>
       </div>
 
       <div class="empty_view"></div>
@@ -66,9 +67,11 @@ export default {
   created() {
     document.title = "搜索";
 
-    this.id = this.$route.query.id;
-    this.sampleid = this.$route.query.sampleid;
+    // this.id = this.$route.query.id;
+    // this.sampleid = this.$route.query.sampleid;
     
+    this.id = localStorage.getItem('lisId');
+    this.sampleid = localStorage.getItem('lisSeaSampleid');
   },
   mounted() {
     if(this.sampleid){
@@ -92,11 +95,14 @@ export default {
     onClickLeft() {
       this.$router.back();
     },
-    clickItem(){
-      //  this.$router.push({
-      //     path: "/lisDetailInfoBox",
-      //     query:{id: this.id,sampleid: this.sampleid}
-      //   });
+    onInput(val){
+      if(val){
+        this.value = val;
+        this.searchSampleTubeInfo(val);
+      }else{
+        this.value = '';
+        this.instrumentList = [];
+      }
     },
     onSearch(val) {
       if(val){

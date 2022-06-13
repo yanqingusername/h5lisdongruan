@@ -70,11 +70,11 @@ export default {
     };
   },
   created() {
-    document.title = '登陆';
+    document.title = '登录';
   },
   mounted() {
     // this.isWechat();
-    this.getAutoLogin();
+    // this.getAutoLogin();
   },
   methods: {
     isWechat() {
@@ -139,14 +139,14 @@ export default {
     commit() {
       let that = this;
       if (this.phone == "") {
-        Toast('请输入账号')
+        Toast('账号不能为空')
           //  Notify({ type: 'danger', message: '请填写手机号'});
         return;
       // } else if (!this.checkPhone(this.phone)) {
       //   Toast('手机号有误')
       //   return;
       } else if (this.code == "") {
-        Toast('请填写密码')
+        Toast('密码不能为空')
           // Notify({ type: 'danger', message: '请填写验证码'});
         return;
       // } else if (this.code == "") {
@@ -177,9 +177,10 @@ export default {
             localStorage.setItem('lisPhone',that.phone);
             localStorage.setItem('lisPassword',that.code)
             if(res.data.allow_auto_login == 1 || res.data.allow_auto_login == 0){
+              localStorage.setItem('lisId',res.data.result[0].id);
               that.$router.push({
                   path: "/lisInfoCustom",
-                  query:{id: res.data.result[0].id}
+                  // query:{id: res.data.result[0].id}
               });
             }
           } else {
@@ -187,12 +188,6 @@ export default {
           }
         });
       }
-    },
-    handleLogin() {
-      this.$router.push({
-        path: "/lisInfoCustom",
-        query:{id: '1'}
-      });
     },
     getAutoLogin(){
       let that = this;
@@ -207,12 +202,13 @@ export default {
         }).then((res) => {
           console.log(res)
           if (res.data.success) {
-            Toast(res.data.msg)
             //allow_auto_login 0-允许自动登录  1-不允许自动登录
             if(res.data.allow_auto_login == 0){
+              Toast(res.data.msg)
+              localStorage.setItem('lisId',res.data.result[0].id);
               that.$router.push({
                   path: "/lisInfoCustom",
-                  query:{id: res.data.result[0].id}
+                  // query:{id: res.data.result[0].id}
               });
             }
           } else {

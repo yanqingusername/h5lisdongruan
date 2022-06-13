@@ -63,6 +63,8 @@
                 type="number"
                 name="boxCodeNumber"
                 placeholder="请输入箱码"
+                autofocus="autofocus"
+                ref="getFocus"
                 :onkeyup="(boxCodeNumber = boxCodeNumber.replace(/[^\w\.\/]/gi, ''))"
               />
               <div
@@ -137,13 +139,24 @@ export default {
 
     document.title = '卡尤迪新冠核酸检测信息采集系统';
 
-    this.id = this.$route.query.id;
+    // this.id = this.$route.query.id;
+    this.id = localStorage.getItem('lisId');
+
+    this.isWechat();
+
+
   },
   mounted() {
-    this.isWechat();
+    // this.isWechat();
     this.getEverydaySampleBoxInfo();
   },
   methods: {
+    changfouce(){
+      let that = this;
+      this.$nextTick(()=>{
+        that.$refs.getFocus.focus();
+      })
+    },
     isWechat() {
       const ua = window.navigator.userAgent.toLowerCase();
       if (ua.match(/micromessenger/i) == "micromessenger") {
@@ -173,10 +186,12 @@ export default {
       api.push("qrCode");
       api.push("barCode");
       // alert(url);
+
+      alert(url);
       const resData = await getJSSDKHELP({ url }); // 根据接口返回appId，timestamp等数据
       console.log("获取微信配置结果", resData);
       if (resData) {
-        // alert(JSON.stringify(resData.data));
+        alert(JSON.stringify(resData.data));
         wx.config({
           // beta: true,
           debug: false,
@@ -289,9 +304,10 @@ export default {
       }).then((res) => {
         if(res){
           if (res.data.success) {
+            localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
             that.$router.push({
               path: "/lisDetail",
-              query: { id: this.id, boxnum: boxCodeNumber },
+              // query: { id: this.id, boxnum: boxCodeNumber },
             });
           } else {
             Toast(res.data.msg);
@@ -315,6 +331,7 @@ export default {
             that.box_num = res.data.box_num;
           } else {
             that.isInput = true;
+            that.changfouce();
           }
         } else {
           Toast(res.data.msg);
@@ -338,9 +355,10 @@ export default {
               }).then((res1) => {
                 if(res1){
                   if (res1.data.success) {
+                    localStorage.setItem('lisDetailBoxnum',that.boxCodeNumber);
                     that.$router.push({
                       path: "/lisDetail",
-                      query: { id: this.id, boxnum: that.boxCodeNumber },
+                      // query: { id: this.id, boxnum: that.boxCodeNumber },
                     });
 
                     that.boxCodeNumber = "";
@@ -378,6 +396,7 @@ export default {
     },
     clearboxCodeNumber() {
       this.boxCodeNumber = "";
+      this.changfouce();
     },
     clickOut() {
       this.isDelete = true;
@@ -414,9 +433,10 @@ export default {
       let that = this;
       if (action === "confirm") {
         that.isShowBox = false;
+        localStorage.setItem('lisDetailBoxnum',that.box_num);
         that.$router.push({
           path: "/lisDetail",
-          query: { id: that.id, boxnum: that.box_num },
+          // query: { id: that.id, boxnum: that.box_num },
         });
         done(); //关闭
       } else if (action === "cancel") {
@@ -427,7 +447,7 @@ export default {
     clickAlreadySmapleInfo(){
       this.$router.push({
         path: "/lisDetailInfo",
-        query:{id: this.id}
+        // query:{id: this.id}
       });
     }
   },

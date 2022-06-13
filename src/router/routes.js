@@ -12,7 +12,7 @@ import lisDetailInfoBoxSearch from '../pages/lisDetailInfoBoxSearch.vue';
 
 const routes = [{
         path: '/login',
-        meta:{title: '登陆'},
+        meta:{title: '登录'},
         component: Login
     },
     {
@@ -56,7 +56,7 @@ const routes = [{
     },
     {
         path: '/',
-        meta:{title: '登陆'},
+        meta:{title: '登录'},
         component: Login
     },
     {

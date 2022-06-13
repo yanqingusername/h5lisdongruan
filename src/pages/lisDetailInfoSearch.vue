@@ -9,6 +9,7 @@
             placeholder="请输入箱码"
             @search="onSearch"
             @cancel="onCancel"
+            @input="onInput"
           />
         </form>
       </div>
@@ -63,11 +64,14 @@ export default {
       value: ''
     };
   },
-  activated() {
+  created() {
     document.title = "搜索";
 
-    this.id = this.$route.query.id;
-    this.boxnum = this.$route.query.boxnum;
+    // this.id = this.$route.query.id;
+    // this.boxnum = this.$route.query.boxnum;
+
+    this.id = localStorage.getItem('lisId');
+    this.boxnum = localStorage.getItem('lisSeaBoxnum');
     
   },
   mounted() {
@@ -94,10 +98,21 @@ export default {
     },
     clickItem(box_num,status){
       if(box_num && status){
+        localStorage.setItem('lisBoxnum',box_num);
+        localStorage.setItem('lisStatus',status);
         this.$router.replace({
           path: "/lisDetailInfoBox",
-          query:{id: this.id,boxnum: box_num,st:status}
+          // query:{id: this.id,boxnum: box_num,st:status}
         });
+      }
+    },
+    onInput(val){
+      if(val){
+        this.value = val;
+        this.searchSampleBoxInfo(val);
+      }else{
+        this.value = '';
+        this.instrumentList = [];
       }
     },
     onSearch(val) {

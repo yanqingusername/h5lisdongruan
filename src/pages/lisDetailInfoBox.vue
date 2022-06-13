@@ -122,11 +122,13 @@ export default {
   created() {
     document.title = this.boxnum + "箱码详情";
     
-    this.id = this.$route.query.id;
-    this.boxnum = this.$route.query.boxnum;
-    this.status = this.$route.query.st;
+    // this.id = this.$route.query.id;
+    // this.boxnum = this.$route.query.boxnum;
+    // this.status = this.$route.query.st;
 
-    
+    this.id = localStorage.getItem('lisId');
+    this.boxnum = localStorage.getItem('lisBoxnum');
+    this.status = localStorage.getItem('lisStatus');
    
   },
   mounted() {
@@ -228,9 +230,10 @@ export default {
       });
     },
     clickSearch(){
+      localStorage.setItem('lisSeaSampleid',"");
       this.$router.push({
         path: "/lisDetailInfoBoxSearch",
-        query:{id: this.id,sampleid:''}
+        // query:{id: this.id,sampleid:''}
       });
     },
     // 扫描
@@ -261,9 +264,10 @@ export default {
      * 
      */
     getBindSearch(boxCodeNumber) {
+      localStorage.setItem('lisSeaSampleid',boxCodeNumber);
       this.$router.push({
         path: "/lisDetailInfoBoxSearch",
-        query:{id: this.id,sampleid:boxCodeNumber}
+        // query:{id: this.id,sampleid:boxCodeNumber}
       });
     },
     onClickLeft() {

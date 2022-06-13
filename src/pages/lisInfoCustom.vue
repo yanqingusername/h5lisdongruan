@@ -112,7 +112,8 @@ export default {
 
     document.title = '采样点人员信息登记';
 
-    this.id = this.$route.query.id;
+    // this.id = this.$route.query.id;
+    this.id = localStorage.getItem('lisId');
   },
   mounted() {
     this.getSamplingRegistrantInfoById();
@@ -199,7 +200,7 @@ export default {
         if (res.data.success) {
           that.$router.push({
             path: "/lisMain",
-            query:{id: that.id}
+            // query:{id: that.id}
           });
         } else {
           Toast(res.data.msg)
