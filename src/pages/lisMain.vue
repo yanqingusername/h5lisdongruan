@@ -187,11 +187,10 @@ export default {
       api.push("barCode");
       // alert(url);
 
-      alert(url);
       const resData = await getJSSDKHELP({ url }); // 根据接口返回appId，timestamp等数据
       console.log("获取微信配置结果", resData);
       if (resData) {
-        alert(JSON.stringify(resData.data));
+        // alert(JSON.stringify(resData.data));
         wx.config({
           // beta: true,
           debug: false,
