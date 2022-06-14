@@ -61,7 +61,8 @@ export default {
       id: "",
       sampleid: "",
       instrumentList:[],
-      value: ''
+      value: '',
+      boxnum: ''
     };
   },
   created() {
@@ -72,6 +73,10 @@ export default {
     
     this.id = localStorage.getItem('lisId');
     this.sampleid = localStorage.getItem('lisSeaSampleid');
+
+    this.boxnum = localStorage.getItem('lisSeaBoxnumSample');
+
+    
   },
   mounted() {
     if(this.sampleid){
@@ -83,7 +88,8 @@ export default {
       let that = this;
       searchSampleTubeInfo({
         sample_id: sampleid,
-        id: this.id
+        id: this.id,
+        box_num: this.boxnum
       }).then((res) => {
         if (res.data.success) {
           that.instrumentList = res.data.result;

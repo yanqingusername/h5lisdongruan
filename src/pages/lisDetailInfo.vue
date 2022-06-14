@@ -37,7 +37,7 @@
             <div class="search-result-view">
               <div class="dis_setting" style="padding: 0px 0px 0px 0px;">
                 <div class="s_center_t_item" style="display:flex;">
-                  <div class="search-result-view-1">{{index+1}}.</div>
+                  <div class="search-result-view-1">{{(instrumentList.length - index)}}.</div>
                   <div class="search-result-view-2">{{item.box_num}}</div>
                 </div>
                 <div class="search-result-view-3" style="display:flex;">

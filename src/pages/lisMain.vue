@@ -280,7 +280,8 @@ export default {
       }).then((res) => {
         if(res){
           if (res.data.success) {
-            that.startScanSampleBox(boxCodeNumber);
+            let can_use = res.data.can_use || false;
+            that.startScanSampleBox(boxCodeNumber,can_use);
             // that.$router.push({
             //   path: "/lisDetail",
             //   query: { id: this.id, boxnum: boxCodeNumber },
@@ -293,13 +294,14 @@ export default {
         }
       });
     },
-    startScanSampleBox(boxCodeNumber) {
+    startScanSampleBox(boxCodeNumber,can_use) {
       let that = this;
       startScanSampleBox({
         box_num: boxCodeNumber,
         // max_sum:max_sum,
         id: that.id,
-        channel_id: that.channel_id
+        channel_id: that.channel_id,
+        can_use: can_use
       }).then((res) => {
         if(res){
           if (res.data.success) {
@@ -345,12 +347,13 @@ export default {
             box_num: that.boxCodeNumber,
           }).then((res) => {
             if (res.data.success) {
-              
+              let can_use = res.data.can_use || false;
               startScanSampleBox({
                 box_num: that.boxCodeNumber,
                 // max_sum:max_sum,
                 id: that.id,
-                channel_id: that.channel_id
+                channel_id: that.channel_id,
+                can_use: can_use
               }).then((res1) => {
                 if(res1){
                   if (res1.data.success) {
