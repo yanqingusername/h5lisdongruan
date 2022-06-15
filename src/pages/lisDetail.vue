@@ -596,7 +596,7 @@ export default {
             confirmButtonColor: "#307FF5",
           }).then(() => {
               deleteSampleTubeInfo({
-                boxnum: that.boxnum,
+                box_num: that.boxnum,
                 sample_id: name,
                 id: that.id
               }).then((res) => {
