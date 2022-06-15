@@ -139,8 +139,8 @@ export default {
 
     document.title = '卡尤迪新冠核酸检测信息采集系统';
 
-    // this.id = this.$route.query.id;
-    this.id = localStorage.getItem('lisId');
+    this.id = this.$route.query.id;
+    // this.id = localStorage.getItem('lisId');
 
     // this.isWechat();
 
@@ -305,10 +305,10 @@ export default {
       }).then((res) => {
         if(res){
           if (res.data.success) {
-            localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
+            // localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
             that.$router.push({
               path: "/lisDetail",
-              // query: { id: this.id, boxnum: boxCodeNumber },
+              query: { id: this.id, boxnum: boxCodeNumber },
             });
           } else {
             Toast(res.data.msg);
@@ -357,10 +357,10 @@ export default {
               }).then((res1) => {
                 if(res1){
                   if (res1.data.success) {
-                    localStorage.setItem('lisDetailBoxnum',that.boxCodeNumber);
+                    // localStorage.setItem('lisDetailBoxnum',that.boxCodeNumber);
                     that.$router.push({
                       path: "/lisDetail",
-                      // query: { id: this.id, boxnum: that.boxCodeNumber },
+                      query: { id: this.id, boxnum: that.boxCodeNumber },
                     });
 
                     that.boxCodeNumber = "";
@@ -435,10 +435,10 @@ export default {
       let that = this;
       if (action === "confirm") {
         that.isShowBox = false;
-        localStorage.setItem('lisDetailBoxnum',that.box_num);
+        // localStorage.setItem('lisDetailBoxnum',that.box_num);
         that.$router.push({
           path: "/lisDetail",
-          // query: { id: that.id, boxnum: that.box_num },
+          query: { id: that.id, boxnum: that.box_num },
         });
         done(); //关闭
       } else if (action === "cancel") {
@@ -449,7 +449,7 @@ export default {
     clickAlreadySmapleInfo(){
       this.$router.push({
         path: "/lisDetailInfo",
-        // query:{id: this.id}
+        query:{id: this.id}
       });
     }
   },

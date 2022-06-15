@@ -105,8 +105,8 @@ export default {
   created() {
     document.title = '已采集信息';
 
-    // this.id = this.$route.query.id;
-    this.id = localStorage.getItem('lisId');
+    this.id = this.$route.query.id;
+    // this.id = localStorage.getItem('lisId');
     this.currentDateText = this.timeFormat1(this.currentDate);
   },
   mounted() {
@@ -206,10 +206,10 @@ export default {
       }
     },
     clickSearch(){
-      localStorage.setItem('lisSeaBoxnum','');
+      // localStorage.setItem('lisSeaBoxnum','');
       this.$router.push({
         path: "/lisDetailInfoSearch",
-        // query:{id: this.id,boxnum:''}
+        query:{id: this.id,boxnum:''}
       });
     },
     // 扫描
@@ -241,10 +241,10 @@ export default {
      * 
      */
     getBindSearch(boxCodeNumber) {
-      localStorage.setItem('lisSeaBoxnum',boxCodeNumber);
+      // localStorage.setItem('lisSeaBoxnum',boxCodeNumber);
       this.$router.push({
         path: "/lisDetailInfoSearch",
-        // query:{id: this.id,boxnum: boxCodeNumber}
+        query:{id: this.id,boxnum: boxCodeNumber}
       });
     },
     onClickLeft() {
@@ -252,11 +252,11 @@ export default {
     },
     clickItem(box_num,status){
       if(box_num && status){
-        localStorage.setItem('lisBoxnum',box_num);
-        localStorage.setItem('lisStatus',status);
+        // localStorage.setItem('lisBoxnum',box_num);
+        // localStorage.setItem('lisStatus',status);
         this.$router.push({
           path: "/lisDetailInfoBox",
-          // query:{id: this.id,boxnum: box_num,st:status}
+          query:{id: this.id,boxnum: box_num,st:status}
         });
       }
     },

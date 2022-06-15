@@ -68,13 +68,14 @@ export default {
   created() {
     document.title = "搜索";
 
-    // this.id = this.$route.query.id;
-    // this.sampleid = this.$route.query.sampleid;
+    this.id = this.$route.query.id;
+    this.boxnum = this.$route.query.boxnum;
+    this.sampleid = this.$route.query.sampleid;
     
-    this.id = localStorage.getItem('lisId');
-    this.sampleid = localStorage.getItem('lisSeaSampleid');
+    // this.id = localStorage.getItem('lisId');
+    // this.sampleid = localStorage.getItem('lisSeaSampleid');
 
-    this.boxnum = localStorage.getItem('lisSeaBoxnumSample');
+    // this.boxnum = localStorage.getItem('lisSeaBoxnumSample');
 
     
   },

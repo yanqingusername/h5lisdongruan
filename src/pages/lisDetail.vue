@@ -187,11 +187,11 @@ export default {
   created() {
     document.title = '箱码详情';
 
-    // this.id = this.$route.query.id;
-    // this.boxnum = this.$route.query.boxnum;
+    this.id = this.$route.query.id;
+    this.boxnum = this.$route.query.boxnum;
 
-    this.id = localStorage.getItem('lisId');
-    this.boxnum = localStorage.getItem('lisDetailBoxnum');
+    // this.id = localStorage.getItem('lisId');
+    // this.boxnum = localStorage.getItem('lisDetailBoxnum');
 
     console.log(this.id);
     console.log(this.boxnum);
@@ -440,7 +440,7 @@ export default {
             that.isShowSuccess = true;
             that.id = that.id;
             that.boxnum = boxCodeNumber;
-            localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
+            // localStorage.setItem('lisDetailBoxnum',boxCodeNumber);
             that.getSampleBoxInfo();
           } else {
             Toast(res.data.msg);

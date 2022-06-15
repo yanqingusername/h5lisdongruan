@@ -67,11 +67,11 @@ export default {
   created() {
     document.title = "搜索";
 
-    // this.id = this.$route.query.id;
-    // this.boxnum = this.$route.query.boxnum;
+    this.id = this.$route.query.id;
+    this.boxnum = this.$route.query.boxnum;
 
-    this.id = localStorage.getItem('lisId');
-    this.boxnum = localStorage.getItem('lisSeaBoxnum');
+    // this.id = localStorage.getItem('lisId');
+    // this.boxnum = localStorage.getItem('lisSeaBoxnum');
     
   },
   mounted() {
@@ -99,11 +99,13 @@ export default {
     },
     clickItem(box_num,status){
       if(box_num && status){
-        localStorage.setItem('lisBoxnum',box_num);
-        localStorage.setItem('lisStatus',status);
+        // localStorage.setItem('lisBoxnum',box_num);
+        // localStorage.setItem('lisStatus',status);
+        this.value = '';
+        this.instrumentList = [];
         this.$router.replace({
           path: "/lisDetailInfoBox",
-          // query:{id: this.id,boxnum: box_num,st:status}
+          query:{id: this.id,boxnum: box_num,st:status}
         });
       }
     },

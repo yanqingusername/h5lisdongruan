@@ -89,7 +89,7 @@ import {
   Button,
   Dialog,
 } from "vant";
-import { getSamplingRegistrantInfoById,writeRegistrantInfo } from "../request/api";
+import { getSamplingRegistrantInfoById,writeRegistrantInfo,getJSSDKHELP } from "../request/api";
 
 export default {
   name: "",
@@ -112,13 +112,71 @@ export default {
 
     document.title = '采样点人员信息登记';
 
-    // this.id = this.$route.query.id;
-    this.id = localStorage.getItem('lisId');
+    this.id = this.$route.query.id;
+    // this.id = localStorage.getItem('lisId');
+
   },
   mounted() {
+    // this.isWechat();
     this.getSamplingRegistrantInfoById();
   },
   methods: {
+    isWechat() {
+      const ua = window.navigator.userAgent.toLowerCase();
+      if (ua.match(/micromessenger/i) == 'micromessenger') {
+        console.log('微信浏览器');
+        this.scanQRJssdk();
+        return true;
+      } else {
+        console.log('普通浏览器,请在手机微信浏览器打开此页面');
+        return false;
+      }
+    },
+    // 初始化sdk配置
+    async scanQRJssdk() {
+      // alert(`url链接:${window.location.href}`);
+      const u = navigator.userAgent;
+      const isAndroid = u.indexOf("Android") > -1 || u.indexOf("Linux") > -1; // Android
+      const isIOS = navigator.platform.indexOf("iPhone") != -1; //ios
+      let url = "";
+      if (isAndroid) {
+        url = location.href;
+      }
+      if (isIOS) {
+        url = location.href.split("#")[0]; // hash模式下,#后面的部分如果带上ios中config会不对
+      }
+      const api = [];
+      // 'qrCode','barCode'
+      api.push("qrCode");
+      api.push("barCode");
+      // alert(url);
+
+      const resData = await getJSSDKHELP({ url }); // 根据接口返回appId，timestamp等数据
+      console.log("获取微信配置结果", resData);
+      if (resData) {
+        // alert(JSON.stringify(resData.data));
+        wx.config({
+          // beta: true,
+          debug: false,
+          appId: resData.data.appId,
+          timestamp: resData.data.timestamp,
+          nonceStr: resData.data.nonceStr,
+          signature: resData.data.signature,
+          jsApiList: ["checkJsApi", "scanQRCode"],
+        });
+        wx.ready(() => {
+          wx.checkJsApi({
+            jsApiList: ["scanQRCode"],
+            success(res) {
+              console.log("aaaa", res);
+            },
+          });
+        });
+        wx.error((res) => {
+          alert(`出错了：${res.errMsg}`); // 这个地方的好处就是wx.config配置错误，会弹出窗口哪里错误，然		后根据微信文档查询即可。
+        });
+      }
+    },
     getSamplingRegistrantInfoById(){
       let that = this;
       getSamplingRegistrantInfoById({
@@ -200,7 +258,7 @@ export default {
         if (res.data.success) {
           that.$router.push({
             path: "/lisMain",
-            // query:{id: that.id}
+            query:{id: that.id}
           });
         } else {
           Toast(res.data.msg)

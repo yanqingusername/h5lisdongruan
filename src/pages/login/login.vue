@@ -177,10 +177,10 @@ export default {
             localStorage.setItem('lisPhone',that.phone);
             localStorage.setItem('lisPassword',that.code)
             if(res.data.allow_auto_login == 1 || res.data.allow_auto_login == 0){
-              localStorage.setItem('lisId',res.data.result[0].id);
+              // localStorage.setItem('lisId',res.data.result[0].id);
               that.$router.push({
                   path: "/lisInfoCustom",
-                  // query:{id: res.data.result[0].id}
+                  query:{id: res.data.result[0].id}
               });
             }
           } else {
@@ -205,10 +205,10 @@ export default {
             //allow_auto_login 0-允许自动登录  1-不允许自动登录
             if(res.data.allow_auto_login == 0){
               Toast(res.data.msg)
-              localStorage.setItem('lisId',res.data.result[0].id);
+              // localStorage.setItem('lisId',res.data.result[0].id);
               that.$router.push({
                   path: "/lisInfoCustom",
-                  // query:{id: res.data.result[0].id}
+                  query:{id: res.data.result[0].id}
               });
             }
           } else {
