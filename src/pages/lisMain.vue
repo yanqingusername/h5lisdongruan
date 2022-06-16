@@ -163,6 +163,7 @@ export default {
         // return true;
         console.log("微信浏览器");
         this.scanQRJssdk();
+        return true;
       } else {
         console.log("普通浏览器,请在手机微信浏览器打开此页面");
         return false;

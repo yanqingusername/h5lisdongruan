@@ -189,8 +189,12 @@ export default {
             that.channel_id = item[0].channel_id;
             that.registrant_member_name = item[0].registrant_member_name;
             that.registrant_member_phone = item[0].registrant_member_phone;
-            that.sampling_member_name = item[0].sampling_member_name;
-            that.sampling_member_phone = item[0].sampling_member_phone;
+            if(item[0].sampling_member_name){
+              that.sampling_member_name = item[0].sampling_member_name;
+            }
+            if(item[0].sampling_member_phone){
+              that.sampling_member_phone = item[0].sampling_member_phone;
+            }
           }
         } else {
             Toast(res.data.msg)
